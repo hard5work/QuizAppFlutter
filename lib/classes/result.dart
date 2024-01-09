@@ -20,6 +20,20 @@ class _ResultClassState extends State<ResultClass> {
     });
   }
 
+
+   String getRatingText(int percentageScore) {
+        if (percentageScore >= 90) {
+            return "Excellent";
+        } else if (percentageScore >= 70) {
+            return "Good";
+        } else if (percentageScore >= 50) {
+            return "Fair";
+        } else if (percentageScore >= 30) {
+            return "Poor";
+        } else {
+            return "Very Poor";
+        }
+    }
   @override
   void dispose() {
     super.dispose();
@@ -43,13 +57,14 @@ class _ResultClassState extends State<ResultClass> {
         backgroundColor: Colors.orange,
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.network(
                 'https://cdn-icons-png.flaticon.com/512/5987/5987898.png',
                 width: 200.0,
-                height: 200.0,
+                height: 100.0,
               ),
-              Text('Excellent \'$storedValue\''),
+              Text('${getRatingText(totalPoints)} \'$storedValue\'', style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),),
               Wrap(
                 clipBehavior: Clip.none,
                 children: [

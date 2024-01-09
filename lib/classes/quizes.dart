@@ -20,8 +20,20 @@ class _QuizClassState extends State<QuizClass> {
   List<ResponseBody> quizList = [];
   ResponseBody? currentQuestion;
   int curQuestion = 1;
+  var selectedAnswer = Colors.purple;
+  var correctAnswer = Colors.green;
+  var wrongAnswer = Colors.red;
+  var unSelectedAnswer = Colors.blueGrey;
+  var disableAnswer = Colors.grey;
+  String? correctAnswerIs = '';
+  List<String> multipleCorrectAnswers = [];
+  bool isAnswerTabbed = false;
+  bool isMultipleQs = false;
+  String? myCorrectAnswer = '';
 
   int totalPoints = 0;
+
+  String isMultipleQuestion = '';
 
   bool isAnswerASelected = false;
   bool isAnswerBSelected = false;
@@ -31,32 +43,170 @@ class _QuizClassState extends State<QuizClass> {
   bool isAnswerFSelected = false;
 
   void _onAnswerTapped(int answer) {
-    setState(() {
-      setAllAnswerFalse();
-      switch (answer) {
-        case 1:
-          isAnswerASelected = !isAnswerASelected;
-          break;
-        case 2:
-          isAnswerBSelected = !isAnswerBSelected;
-          break;
-        case 3:
-          isAnswerCSelected = !isAnswerCSelected;
-          break;
-        case 4:
-          isAnswerDSelected = !isAnswerDSelected;
-          break;
-        case 5:
-          isAnswerESelected = !isAnswerESelected;
-          break;
-        case 6:
-          isAnswerFSelected = !isAnswerFSelected;
-          break;
-        default:
-          setAllAnswerFalse();
-          break;
+    if (isMultipleQuestion != 'true') {
+      if (!isAnswerTabbed) {
+        setState(() {
+          isAnswerTabbed = true;
+          changeAnswerFunc(answer);
+          unSelectedAnswer = disableAnswer;
+          myCorrectAnswer = correctAnswerIs;
+        });
       }
-    });
+    } else {
+      setState(() {
+        isAnswerTabbed = true;
+        multipleChooseAnswers(answer);
+      });
+    }
+  }
+
+  bool isAnsACorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_a')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_a' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  bool isAnsBCorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_b')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_b' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  bool isAnsCCorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_c')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_c' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  bool isAnsDCorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_d')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_d' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  bool isAnsECorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_e')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_e' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  bool isAnsFCorrect() {
+    // if (isMultipleQs) {
+    //   if (multipleCorrectAnswers.contains('answer_f')) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+      if ('answer_f' == correctAnswerIs) {
+        return true;
+      } else {
+        return false;
+      }
+    // }
+  }
+
+  void changeAnswerFunc(int answer) {
+    setAllAnswerFalse();
+    switch (answer) {
+      case 1:
+        isAnswerASelected = !isAnswerASelected;
+        break;
+      case 2:
+        isAnswerBSelected = !isAnswerBSelected;
+        break;
+      case 3:
+        isAnswerCSelected = !isAnswerCSelected;
+        break;
+      case 4:
+        isAnswerDSelected = !isAnswerDSelected;
+        break;
+      case 5:
+        isAnswerESelected = !isAnswerESelected;
+        break;
+      case 6:
+        isAnswerFSelected = !isAnswerFSelected;
+        break;
+      default:
+        setAllAnswerFalse();
+        break;
+    }
+  }
+
+  void multipleChooseAnswers(int answer) {
+    switch (answer) {
+      case 1:
+        isAnswerASelected = true;
+        break;
+      case 2:
+        isAnswerBSelected = true;
+        break;
+      case 3:
+        isAnswerCSelected = true;
+        break;
+      case 4:
+        isAnswerDSelected = true;
+        break;
+      case 5:
+        isAnswerESelected = true;
+        break;
+      case 6:
+        isAnswerFSelected = true;
+        break;
+      default:
+        setAllAnswerFalse();
+        break;
+    }
   }
 
   String setSelectedAnswer() {
@@ -78,13 +228,17 @@ class _QuizClassState extends State<QuizClass> {
   }
 
   void checkAnswers() {
-    if (currentQuestion!.correctAnswer != null) {
-      if (currentQuestion!.correctAnswer == setSelectedAnswer()) {
+      if (isMultipleQuestion != 'true') {
+        if (correctAnswerIs == setSelectedAnswer()) {
+          setState(() {
+            totalPoints += 10;
+          });
+        }
+      } else {
         setState(() {
           totalPoints += 10;
         });
       }
-    }
     getNextQuestion();
   }
 
@@ -93,14 +247,59 @@ class _QuizClassState extends State<QuizClass> {
       if (curQuestion < 10) {
         setState(() {
           setAllAnswerFalse();
+          isAnswerTabbed = false;
           currentQuestion = quizList[generateRandomNumber()];
+          isMultipleQuestion = currentQuestion?.multipleCorrectAnswers ?? '';
+          isMultipleQs = isMultipleQuestion == 'true';
+          correctAnswerIs = correctAnswers(currentQuestion?.correctAnswers);
           curQuestion++;
+          unSelectedAnswer = Colors.blueGrey;
+          myCorrectAnswer = '';
         });
       } else {
         navigateToResult(context);
       }
     } else {
       simpleDialog();
+    }
+  }
+
+  String correctAnswers(CorrectAnswers? answers) {
+    if (answers == null) return '';
+    if (isMultipleQuestion == 'true') {
+      if (answers.answerACorrect == 'true') {
+        multipleCorrectAnswers.add('answer_a');
+      }
+      if (answers.answerBCorrect == 'true') {
+        multipleCorrectAnswers.add('answer_b');
+      }
+      if (answers.answerCCorrect == 'true') {
+        multipleCorrectAnswers.add('answer_c');
+      }
+      if (answers.answerDCorrect == 'true') {
+        multipleCorrectAnswers.add('answer_d');
+      }
+      if (answers.answerECorrect == 'true') {
+        multipleCorrectAnswers.add('answer_e');
+      }
+      if (answers.answerFCorrect == 'true') {
+        multipleCorrectAnswers.add('answer_f');
+      }
+    }
+    if (answers.answerACorrect == 'true') {
+      return 'answer_a';
+    } else if (answers.answerBCorrect == 'true') {
+      return 'answer_b';
+    } else if (answers.answerCCorrect == 'true') {
+      return 'answer_c';
+    } else if (answers.answerDCorrect == 'true') {
+      return 'answer_d';
+    } else if (answers.answerECorrect == 'true') {
+      return 'answer_e';
+    } else if (answers.answerFCorrect == 'true') {
+      return 'answer_f';
+    } else {
+      return '';
     }
   }
 
@@ -144,6 +343,34 @@ class _QuizClassState extends State<QuizClass> {
     });
   }
 
+  Color getCardColor(bool answer) {
+    if (answer) {
+      if (isAnswerTabbed) {
+        if (correctAnswerIs == setSelectedAnswer()) {
+          return Colors.green; // Change color for correct answer
+        } else {
+          return Colors.red; // Change color for wrong answer
+        }
+      } else {
+        return Colors.grey; // Change color for unselected answer
+      }
+    } else {
+      return unSelectedAnswer;
+    }
+  }
+
+  Color checkColor() {
+    if (isAnswerTabbed) {
+      if (isAnswerASelected) {
+        return correctAnswer;
+      } else {
+        return unSelectedAnswer;
+      }
+    } else {
+      return unSelectedAnswer;
+    }
+  }
+
   void navigateToResult(BuildContext context) {
     Navigator.push(
         context,
@@ -169,6 +396,9 @@ class _QuizClassState extends State<QuizClass> {
       setState(() {
         quizList = quizData;
         currentQuestion = quizList[generateRandomNumber()];
+        isMultipleQuestion = currentQuestion?.multipleCorrectAnswers ?? '';
+        isMultipleQs = isMultipleQuestion == 'true';
+        correctAnswerIs = correctAnswers(currentQuestion?.correctAnswers);
       });
     } catch (e) {
       print('Error fetching data: $e');
@@ -178,8 +408,7 @@ class _QuizClassState extends State<QuizClass> {
 
   int generateRandomNumber() {
     Random random = Random();
-    return random.nextInt(
-        quizList.length - 1); // Generates a random integer between 0 and 99
+    return random.nextInt(quizList.length - 1);
   }
 
   @override
@@ -288,12 +517,29 @@ class _QuizClassState extends State<QuizClass> {
                     elevation: 5.0,
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        currentQuestion!.question,
-                        style: const TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          Text(
+                            currentQuestion!.question,
+                            style: const TextStyle(
+                                fontSize: 18.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Visibility(
+                            visible: (isMultipleQuestion == 'true'),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Choose multiple answers',
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -314,9 +560,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(1);
                               },
                               child: Card(
-                                color: isAnswerASelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsACorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerASelected))
+                                    : getCardColor(isAnswerASelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(currentQuestion!.answers.answerA,
@@ -333,9 +581,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(2);
                               },
                               child: Card(
-                                color: isAnswerBSelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsBCorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerBSelected))
+                                    : getCardColor(isAnswerBSelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(currentQuestion!.answers.answerB,
@@ -352,9 +602,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(3);
                               },
                               child: Card(
-                                color: isAnswerCSelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsCCorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerCSelected))
+                                    : getCardColor(isAnswerCSelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(
@@ -372,9 +624,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(4);
                               },
                               child: Card(
-                                color: isAnswerDSelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsDCorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerDSelected))
+                                    : getCardColor(isAnswerDSelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(
@@ -392,9 +646,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(5);
                               },
                               child: Card(
-                                color: isAnswerESelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsECorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerESelected))
+                                    : getCardColor(isAnswerESelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(
@@ -412,9 +668,11 @@ class _QuizClassState extends State<QuizClass> {
                                 _onAnswerTapped(6);
                               },
                               child: Card(
-                                color: isAnswerFSelected
-                                    ? Colors.green
-                                    : Colors.blueAccent,
+                                color: isAnswerTabbed
+                                    ? (isAnsFCorrect()
+                                        ? correctAnswer
+                                        : getCardColor(isAnswerFSelected))
+                                    : getCardColor(isAnswerFSelected),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(
@@ -435,16 +693,30 @@ class _QuizClassState extends State<QuizClass> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.white,
                         shape: const RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
                     onPressed: () {
                       checkAnswers();
                     },
-                    child: const Text(
-                      'SUBMIT',
-                      style: TextStyle(color: Colors.white),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Next',
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Icon(
+                          Icons.arrow_right_alt_outlined,
+                          color: Colors.orange,
+                        )
+                      ],
                     ),
                   ),
                 ],
