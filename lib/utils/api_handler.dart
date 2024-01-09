@@ -17,18 +17,11 @@ Future<List<ResponseBody>> fetchDataWithHeaders() async {
     );
 
     if (response.statusCode == 200) {
-      // print('Response body -> ${response.body}');
       final List<dynamic> jsonData = json.decode(response.body);
 
-      // print('Response body -> ${jsonData}');
       List<ResponseBody> quizDataList = jsonData.map((data) {
-        // print('Response body data -> ${data}');
         return ResponseBody.fromJson(data);
       }).toList();
-
-      print('Response body -> ${quizDataList.length}');
-
-      print('Response body -> ${quizDataList}');
       return quizDataList;
     } else {
       print('Response error :-> ${response.body}');

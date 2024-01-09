@@ -3,7 +3,8 @@ import 'package:quiz_app_flutter/classes/quizes.dart';
 import 'package:quiz_app_flutter/helper/shared_pref_helper.dart';
 
 class ResultClass extends StatefulWidget {
-  const ResultClass({super.key});
+  final int results;
+  const ResultClass({super.key, required this.results});
 
   @override
   State<ResultClass> createState() => _ResultClassState();
@@ -11,6 +12,7 @@ class ResultClass extends StatefulWidget {
 
 class _ResultClassState extends State<ResultClass> {
   String? storedValue = '';
+  int totalPoints = 0;
   Future<void> _checkStoredValue() async {
     String? values = await SharedPreferencesHelper.getValue('name');
     setState(() {
@@ -27,6 +29,7 @@ class _ResultClassState extends State<ResultClass> {
   void initState() {
     super.initState();
     _checkStoredValue();
+    totalPoints = widget.results;
   }
 
   @override
@@ -47,18 +50,18 @@ class _ResultClassState extends State<ResultClass> {
                 height: 200.0,
               ),
               Text('Excellent \'$storedValue\''),
-              const Wrap(
+              Wrap(
                 clipBehavior: Clip.none,
                 children: [
                   Card(
-                    margin: EdgeInsets.all(40.0),
+                    margin: const EdgeInsets.all(40.0),
                     color: Colors.white,
                     child: Center(
                       child: Padding(
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
-                            Row(
+                            const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
@@ -77,7 +80,7 @@ class _ResultClassState extends State<ResultClass> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20.0,
                             ),
                             Stack(
@@ -90,8 +93,9 @@ class _ResultClassState extends State<ResultClass> {
                                       height: 200.0,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 20.0,
-                                        value: 1,
+                                        value: totalPoints / 100,
                                         color: Colors.orange,
+                                        backgroundColor: Colors.orange[100],
                                       ),
                                     ),
                                   ),
@@ -99,10 +103,10 @@ class _ResultClassState extends State<ResultClass> {
                                 Positioned(
                                   child: Center(
                                     child: Padding(
-                                      padding: EdgeInsets.all(16.0),
+                                      padding: const EdgeInsets.all(16.0),
                                       child: Text(
-                                        '20',
-                                        style: TextStyle(
+                                        totalPoints.toString(),
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20.0),
                                       ),
@@ -111,12 +115,12 @@ class _ResultClassState extends State<ResultClass> {
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20.0,
                             ),
                             Text(
-                              'Your Score was 20 points.',
-                              style: TextStyle(
+                              'Your Score was $totalPoints points.',
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 20.0,
@@ -129,7 +133,10 @@ class _ResultClassState extends State<ResultClass> {
                   ),
                 ],
               ),
-              const Expanded(child: SizedBox(height: 10.0,)),
+              const Expanded(
+                  child: SizedBox(
+                height: 10.0,
+              )),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
@@ -141,7 +148,9 @@ class _ResultClassState extends State<ResultClass> {
                     },
                     child: const Text('Take Another Shot')),
               ),
-              const SizedBox(height: 20.0,)
+              const SizedBox(
+                height: 20.0,
+              )
             ],
           ),
         ),

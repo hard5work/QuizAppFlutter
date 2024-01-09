@@ -21,6 +21,8 @@ class _QuizClassState extends State<QuizClass> {
   ResponseBody? currentQuestion;
   int curQuestion = 1;
 
+  int totalPoints = 0;
+
   bool isAnswerASelected = false;
   bool isAnswerBSelected = false;
   bool isAnswerCSelected = false;
@@ -57,6 +59,69 @@ class _QuizClassState extends State<QuizClass> {
     });
   }
 
+  String setSelectedAnswer() {
+    if (isAnswerASelected) {
+      return 'answer_a';
+    } else if (isAnswerBSelected) {
+      return 'answer_b';
+    } else if (isAnswerCSelected) {
+      return 'answer_c';
+    } else if (isAnswerDSelected) {
+      return 'answer_d';
+    } else if (isAnswerESelected) {
+      return 'answer_e';
+    } else if (isAnswerFSelected) {
+      return 'answer_f';
+    } else {
+      return '';
+    }
+  }
+
+  void checkAnswers() {
+    if (currentQuestion!.correctAnswer != null) {
+      if (currentQuestion!.correctAnswer == setSelectedAnswer()) {
+        setState(() {
+          totalPoints += 10;
+        });
+      }
+    }
+    getNextQuestion();
+  }
+
+  void getNextQuestion() {
+    if (setSelectedAnswer() != '') {
+      if (curQuestion < 10) {
+        setState(() {
+          setAllAnswerFalse();
+          currentQuestion = quizList[generateRandomNumber()];
+          curQuestion++;
+        });
+      } else {
+        navigateToResult(context);
+      }
+    } else {
+      simpleDialog();
+    }
+  }
+
+  Future<void> simpleDialog() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: const Text('Please! select atleast one answer.'),
+            children: [
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 'Okay');
+                },
+                child: const Text('Okay'),
+              ),
+            ],
+          );
+        });
+  }
+
   void setAllAnswerFalse() {
     isAnswerASelected = false;
     isAnswerBSelected = false;
@@ -81,7 +146,12 @@ class _QuizClassState extends State<QuizClass> {
 
   void navigateToResult(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ResultClass()));
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultClass(
+            results: totalPoints,
+          ),
+        ));
     _timer.cancel();
   }
 
@@ -186,20 +256,20 @@ class _QuizClassState extends State<QuizClass> {
                           const SizedBox(
                             width: 10.0,
                           ),
-                          const Wrap(
+                          Wrap(
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.star,
                                     color: Color.fromARGB(255, 215, 134, 27),
                                   ),
-                                  SizedBox(
-                                    width: 10.0,
+                                  const SizedBox(
+                                    width: 5.0,
                                   ),
-                                  Text('10'),
-                                  SizedBox(
+                                  Text(totalPoints.toString()),
+                                  const SizedBox(
                                     width: 10.0,
                                   ),
                                 ],
@@ -370,14 +440,7 @@ class _QuizClassState extends State<QuizClass> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
                     onPressed: () {
-                      if (curQuestion < 10) {
-                        currentQuestion = quizList[generateRandomNumber()];
-                        setState(() {
-                          curQuestion++;
-                        });
-                      } else {
-                        navigateToResult(context);
-                      }
+                      checkAnswers();
                     },
                     child: const Text(
                       'SUBMIT',
